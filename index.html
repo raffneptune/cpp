@@ -95,49 +95,921 @@ int main() {
 }
 </code></pre>
 
-<h2>2. </h2>
+<h2>2. Barbershop</h2>
 <pre><code class="code-block">
+#include <iostream>
+#include <queue>
+#include <string>
+#include <thread>
+#include <chrono>
 
+using namespace std;
+
+class Barbershop {
+private:
+    queue<string> antrian;  // Antrian pelanggan
+    bool buka;  // Status barbershop
+
+public:
+    Barbershop() : buka(true) {}
+
+    void bukaBarbershop() {
+        cout << "Barbershop sedang buka, silakan masuk!" << endl;
+    }
+
+    void tutupBarbershop() {
+        buka = false;
+        cout << "Barbershop sudah tutup. Terima kasih sudah datang!" << endl;
+    }
+
+    void tambahPelanggan(const string& nama) {
+        if (buka) {
+            antrian.push(nama);
+            cout << nama << " telah masuk ke antrian." << endl;
+        } else {
+            cout << "Barbershop sudah tutup. Anda tidak bisa mendaftar." << endl;
+        }
+    }
+
+    void prosesPelanggan() {
+        if (!antrian.empty()) {
+            string pelanggan = antrian.front();
+            antrian.pop();
+            cout << "Sedang melayani " << pelanggan << "..." << endl;
+            this_thread::sleep_for(chrono::seconds(2));  // Simulasi pemotongan rambut
+            cout << pelanggan << " telah selesai dilayani." << endl;
+        } else {
+            cout << "Tidak ada pelanggan di antrian." << endl;
+        }
+    }
+
+    void tampilkanAntrian() {
+        if (!antrian.empty()) {
+            cout << "Antrian pelanggan:" << endl;
+            int no = 1;
+            queue<string> temp = antrian;
+            while (!temp.empty()) {
+                cout << no++ << ". " << temp.front() << endl;
+                temp.pop();
+            }
+        } else {
+            cout << "Tidak ada pelanggan di antrian." << endl;
+        }
+    }
+};
+
+int main() {
+    Barbershop barbershop;
+    barbershop.bukaBarbershop();
+
+    while (true) {
+        cout << "\n--- Menu ---" << endl;
+        cout << "1. Tambah Pelanggan" << endl;
+        cout << "2. Proses Pelanggan" << endl;
+        cout << "3. Lihat Antrian" << endl;
+        cout << "4. Tutup Barbershop" << endl;
+        cout << "5. Keluar" << endl;
+        
+        int pilihan;
+        cout << "Pilih menu (1-5): ";
+        cin >> pilihan;
+        cin.ignore();  // Menghindari masalah input buffer setelah cin >> pilihan
+
+        if (pilihan == 1) {
+            string nama;
+            cout << "Masukkan nama pelanggan: ";
+            getline(cin, nama);
+            barbershop.tambahPelanggan(nama);
+        }
+        else if (pilihan == 2) {
+            barbershop.prosesPelanggan();
+        }
+        else if (pilihan == 3) {
+            barbershop.tampilkanAntrian();
+        }
+        else if (pilihan == 4) {
+            barbershop.tutupBarbershop();
+            break;
+        }
+        else if (pilihan == 5) {
+            cout << "Terima kasih telah menggunakan program ini!" << endl;
+            break;
+        }
+        else {
+            cout << "Pilihan tidak valid, coba lagi." << endl;
+        }
+    }
+
+    return 0;
+}
 </code></pre>
 
-<h2>3. </h2>
+<h2>3. Bioskop</h2>
 <pre><code class="code-block">
+#include <iostream>
+using namespace std;
 
+// Menampilkan daftar film yang tersedia
+void showFilms() {
+    cout << "Daftar Film yang Tersedia:" << endl;
+    cout << "1. Film A - Harga: Rp 50000" << endl;
+    cout << "2. Film B - Harga: Rp 60000" << endl;
+    cout << "3. Film C - Harga: Rp 70000" << endl;
+    cout << "4. Film D - Harga: Rp 55000" << endl;
+}
+
+// Memilih film yang diinginkan oleh pengguna
+int pilihFilm() {
+    int pilihan;
+    while (true) {
+        cout << "\nPilih film (1-4): ";
+        cin >> pilihan;
+        if (pilihan >= 1 && pilihan <= 4) {
+            return pilihan;
+        } else {
+            cout << "Pilihan tidak valid, coba lagi." << endl;
+        }
+    }
+}
+
+// Mendapatkan nama film berdasarkan pilihan
+string getFilmName(int pilihan) {
+    switch (pilihan) {
+        case 1: return "Film A";
+        case 2: return "Film B";
+        case 3: return "Film C";
+        case 4: return "Film D";
+        default: return "Film Tidak Diketahui";
+    }
+}
+
+// Proses membeli tiket
+void beliTiket() {
+    int pilihan, jumlahTiket, totalHarga;
+
+    while (true) {
+        showFilms();
+        pilihan = pilihFilm();
+
+        // Menghitung harga berdasarkan film yang dipilih
+        switch (pilihan) {
+            case 1: totalHarga = 50000; break;
+            case 2: totalHarga = 60000; break;
+            case 3: totalHarga = 70000; break;
+            case 4: totalHarga = 55000; break;
+            default: totalHarga = 0; break;
+        }
+
+        // Input jumlah tiket
+        cout << "Masukkan jumlah tiket yang ingin dibeli: ";
+        cin >> jumlahTiket;
+
+        totalHarga *= jumlahTiket; // Menghitung total harga
+
+        // Menampilkan hasil pembelian
+        cout << "\nTiket untuk film " << getFilmName(pilihan) 
+             << " (" << jumlahTiket << " tiket) berhasil dipesan." << endl;
+        cout << "Total harga: Rp " << totalHarga << endl;
+
+        // Tanya apakah ingin membeli tiket lagi
+        char lagi;
+        cout << "\nApakah Anda ingin membeli tiket lagi? (y/t): ";
+        cin >> lagi;
+
+        if (tolower(lagi) == 't') {
+            cout << "Terima kasih telah membeli tiket di bioskop kami!" << endl;
+            break;
+        }
+    }
+}
+
+int main() {
+    beliTiket();
+    return 0;
+}
 </code></pre>
 
-<h2>4. </h2>
+<h2>4. Dealer Kartu (Black Jack Simplified)</h2>
 <pre><code class="code-block">
+#include <iostream>
+#include <vector>
+#include <cstdlib>
+#include <ctime>
 
+using namespace std;
+
+// Daftar kartu dalam deck
+const vector<string> deck = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"};
+
+// Fungsi untuk menghitung nilai kartu
+int card_value(const string& card) {
+    if (card == "J" || card == "Q" || card == "K") {
+        return 10;
+    } else if (card == "A") {
+        return 11; // Menganggap Ace = 11 untuk kesederhanaan
+    } else {
+        return stoi(card); // Kartu angka (2-10)
+    }
+}
+
+// Fungsi untuk membagikan kartu secara acak
+string deal_card(vector<string>& deck) {
+    int index = rand() % deck.size();
+    string card = deck[index];
+    deck.erase(deck.begin() + index); // Hapus kartu yang sudah dibagikan
+    return card;
+}
+
+// Fungsi untuk menghitung total nilai kartu dalam hand
+int calculate_hand(const vector<string>& hand) {
+    int total = 0;
+    for (const string& card : hand) {
+        total += card_value(card);
+    }
+    return total;
+}
+
+// Fungsi utama untuk menjalankan permainan
+void start_game() {
+    vector<string> deck_copy = deck; // Salinan deck untuk permainan
+    srand(time(0)); // Menginisialisasi seed untuk random number generator
+
+    // Kartu untuk pemain dan dealer
+    vector<string> player_hand, dealer_hand;
+
+    // Membagikan dua kartu untuk pemain dan dealer
+    player_hand.push_back(deal_card(deck_copy));
+    player_hand.push_back(deal_card(deck_copy));
+    dealer_hand.push_back(deal_card(deck_copy));
+    dealer_hand.push_back(deal_card(deck_copy));
+
+    // Menampilkan kartu awal pemain dan dealer (satu kartu dealer tersembunyi)
+    cout << "Kartu Anda: ";
+    for (const string& card : player_hand) {
+        cout << card << " ";
+    }
+    cout << "dengan nilai " << calculate_hand(player_hand) << endl;
+    cout << "Kartu Dealer: " << dealer_hand[0] << " dan kartu tersembunyi" << endl;
+
+    // Giliran pemain
+    while (calculate_hand(player_hand) < 21) {
+        string action;
+        cout << "Apakah Anda ingin 'Hit' atau 'Stand'? ";
+        cin >> action;
+        if (action == "hit" || action == "Hit") {
+            player_hand.push_back(deal_card(deck_copy));
+            cout << "Kartu Anda sekarang: ";
+            for (const string& card : player_hand) {
+                cout << card << " ";
+            }
+            cout << "dengan nilai " << calculate_hand(player_hand) << endl;
+        } else if (action == "stand" || action == "Stand") {
+            break;
+        } else {
+            cout << "Pilihan tidak valid. Pilih 'Hit' atau 'Stand'." << endl;
+        }
+    }
+
+    // Jika pemain melebihi 21
+    if (calculate_hand(player_hand) > 21) {
+        cout << "Nilai kartu Anda melebihi 21! Anda kalah!" << endl;
+        return;
+    }
+
+    // Giliran dealer (dealer akan 'hit' sampai total kartu >= 17)
+    cout << "Kartu Dealer sekarang: ";
+    for (const string& card : dealer_hand) {
+        cout << card << " ";
+    }
+    cout << "dengan nilai " << calculate_hand(dealer_hand) << endl;
+
+    while (calculate_hand(dealer_hand) < 17) {
+        cout << "Dealer memukul kartu..." << endl;
+        dealer_hand.push_back(deal_card(deck_copy));
+        cout << "Kartu Dealer sekarang: ";
+        for (const string& card : dealer_hand) {
+            cout << card << " ";
+        }
+        cout << "dengan nilai " << calculate_hand(dealer_hand) << endl;
+    }
+
+    // Menentukan pemenang
+    int player_total = calculate_hand(player_hand);
+    int dealer_total = calculate_hand(dealer_hand);
+
+    if (dealer_total > 21) {
+        cout << "Dealer melebihi 21! Anda menang!" << endl;
+    } else if (player_total > dealer_total) {
+        cout << "Anda menang!" << endl;
+    } else if (player_total < dealer_total) {
+        cout << "Dealer menang!" << endl;
+    } else {
+        cout << "Hasil seri!" << endl;
+    }
+}
+
+int main() {
+    cout << "Selamat datang di permainan Dealer Kartu!" << endl;
+    start_game();
+    return 0;
+}
 </code></pre>
 
-<h2>5. </h2>
+<h2>5. Diler Kendaraan</h2>
 <pre><code class="code-block">
+#include <iostream>
+#include <vector>
+#include <string>
 
+using namespace std;
+
+class Vehicle {
+private:
+    string model;
+    int price;
+    int stock;
+
+public:
+    Vehicle(string model, int price, int stock) : model(model), price(price), stock(stock) {}
+
+    // Menampilkan informasi kendaraan
+    void displayInfo() {
+        cout << "Model: " << model << ", Harga: Rp" << price << ", Stok: " << stock << endl;
+    }
+
+    // Mengupdate stok setelah pembelian
+    void updateStock(int quantity) {
+        stock -= quantity;
+        if (stock < 0) {
+            stock = 0;
+        }
+    }
+
+    // Memeriksa ketersediaan stok
+    bool isAvailable(int quantity) {
+        return stock >= quantity;
+    }
+
+    int getPrice() {
+        return price;
+    }
+
+    string getModel() {
+        return model;
+    }
+
+    int getStock() {
+        return stock;
+    }
+};
+
+class VehicleDealer {
+private:
+    vector<Vehicle> vehicles;
+
+public:
+    // Menambahkan kendaraan ke diler
+    void addVehicle(string model, int price, int stock) {
+        Vehicle vehicle(model, price, stock);
+        vehicles.push_back(vehicle);
+    }
+
+    // Menampilkan semua kendaraan yang tersedia
+    void displayVehicles() {
+        if (vehicles.empty()) {
+            cout << "Tidak ada kendaraan di diler." << endl;
+            return;
+        }
+        cout << "\nKendaraan yang Tersedia di Diler:" << endl;
+        for (size_t i = 0; i < vehicles.size(); ++i) {
+            cout << (i + 1) << ". ";
+            vehicles[i].displayInfo();
+        }
+    }
+
+    // Pembelian kendaraan
+    void purchaseVehicle() {
+        displayVehicles();
+        if (vehicles.empty()) {
+            return;
+        }
+
+        int choice, quantity;
+        cout << "\nPilih kendaraan (masukkan nomor): ";
+        cin >> choice;
+        cout << "Berapa banyak yang ingin dibeli? ";
+        cin >> quantity;
+
+        if (choice < 1 || choice > vehicles.size()) {
+            cout << "Pilihan tidak valid." << endl;
+            return;
+        }
+
+        Vehicle& selectedVehicle = vehicles[choice - 1];
+        if (selectedVehicle.isAvailable(quantity)) {
+            int totalPrice = selectedVehicle.getPrice() * quantity;
+            cout << "\nPembelian Sukses! Total Harga: Rp" << totalPrice << endl;
+            selectedVehicle.updateStock(quantity);
+        } else {
+            cout << "\nStok tidak cukup." << endl;
+        }
+    }
+};
+
+int main() {
+    VehicleDealer dealer;
+
+    // Menambahkan beberapa kendaraan ke diler
+    dealer.addVehicle("Mobil Sedan", 300000000, 10);
+    dealer.addVehicle("Motor Sport", 100000000, 5);
+    dealer.addVehicle("Mobil SUV", 500000000, 3);
+
+    int choice;
+    while (true) {
+        cout << "\n--- Menu Diler Kendaraan ---" << endl;
+        cout << "1. Lihat kendaraan yang tersedia" << endl;
+        cout << "2. Pembelian kendaraan" << endl;
+        cout << "3. Keluar" << endl;
+
+        cout << "\nPilih menu: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                dealer.displayVehicles();
+                break;
+            case 2:
+                dealer.purchaseVehicle();
+                break;
+            case 3:
+                cout << "Terima kasih telah mengunjungi diler kami!" << endl;
+                return 0;
+            default:
+                cout << "Pilihan tidak valid." << endl;
+        }
+    }
+
+    return 0;
+}
 </code></pre>
 
-<h2>6. </h2>
+<h2>6. Gaji</h2>
 <pre><code class="code-block">
+#include <iostream>
+using namespace std;
 
+// Fungsi untuk menghitung gaji total
+double hitungGaji(double gajiPokok, double tunjangan, double potongan) {
+    return gajiPokok + tunjangan - potongan;
+}
+
+int main() {
+    double gajiPokok, tunjangan, potongan, gajiTotal;
+    
+    // Menampilkan judul program
+    cout << "Program Perhitungan Gaji Karyawan" << endl;
+    
+    // Input data
+    cout << "Masukkan gaji pokok: Rp ";
+    cin >> gajiPokok;
+    cout << "Masukkan tunjangan: Rp ";
+    cin >> tunjangan;
+    cout << "Masukkan potongan: Rp ";
+    cin >> potongan;
+    
+    // Menghitung gaji total
+    gajiTotal = hitungGaji(gajiPokok, tunjangan, potongan);
+    
+    // Menampilkan hasil perhitungan
+    cout << "\nRingkasan Gaji:" << endl;
+    cout << "Gaji Pokok: Rp " << gajiPokok << endl;
+    cout << "Tunjangan: Rp " << tunjangan << endl;
+    cout << "Potongan: Rp " << potongan << endl;
+    cout << "Gaji Total: Rp " << gajiTotal << endl;
+    
+    return 0;
+}
 </code></pre>
 
-<h2>7. </h2>
+<h2>7. Kaafe</h2>
 <pre><code class="code-block">
+#include <iostream>
+#include <unordered_map>
+#include <string>
+using namespace std;
 
+class Cafe {
+private:
+    unordered_map<string, int> menu;  // Menyimpan menu dan harga
+    unordered_map<string, int> pesanan;  // Menyimpan pesanan dan jumlah
+
+public:
+    // Konstruktor untuk mengisi menu kafe
+    Cafe() {
+        menu["Kopi"] = 15000;
+        menu["Teh"] = 10000;
+        menu["Espresso"] = 20000;
+        menu["Cappuccino"] = 25000;
+        menu["Kue"] = 12000;
+    }
+
+    // Menampilkan menu
+    void tampilkanMenu() {
+        cout << "\n--- Menu Kafe ---" << endl;
+        for (const auto& item : menu) {
+            cout << item.first << ": Rp " << item.second << endl;
+        }
+    }
+
+    // Menambah pesanan
+    void tambahPesanan() {
+        string pesananItem;
+        int jumlah;
+
+        while (true) {
+            tampilkanMenu();
+            cout << "\nMasukkan nama item yang ingin dipesan (ketik 'selesai' untuk mengakhiri): ";
+            getline(cin, pesananItem);
+            if (pesananItem == "selesai") {
+                break;
+            }
+
+            if (menu.find(pesananItem) != menu.end()) {
+                cout << "Berapa banyak " << pesananItem << " yang ingin dipesan? ";
+                cin >> jumlah;
+                cin.ignore();  // Untuk menghindari masalah dengan getline setelah cin
+
+                pesanan[pesananItem] += jumlah;
+                cout << jumlah << " " << pesananItem << " telah ditambahkan ke pesanan." << endl;
+            } else {
+                cout << "Item tidak ada dalam menu. Silakan coba lagi." << endl;
+            }
+        }
+    }
+
+    // Menghitung total harga pesanan
+    int hitungTotal() {
+        int total = 0;
+        for (const auto& item : pesanan) {
+            total += menu[item.first] * item.second;
+        }
+        return total;
+    }
+
+    // Menampilkan pesanan dan total harga
+    void tampilkanPesanan() {
+        if (pesanan.empty()) {
+            cout << "\nTidak ada pesanan." << endl;
+        } else {
+            cout << "\n--- Pesanan Anda ---" << endl;
+            for (const auto& item : pesanan) {
+                cout << item.first << " x " << item.second << " = Rp " << menu[item.first] * item.second << endl;
+            }
+            cout << "\nTotal yang harus dibayar: Rp " << hitungTotal() << endl;
+        }
+    }
+};
+
+int main() {
+    Cafe cafe;
+    int pilihan;
+
+    while (true) {
+        cout << "\n--- Selamat Datang di Kafe! ---" << endl;
+        cout << "1. Lihat Menu" << endl;
+        cout << "2. Tambah Pesanan" << endl;
+        cout << "3. Lihat Pesanan dan Total" << endl;
+        cout << "4. Keluar" << endl;
+        
+        cout << "Pilih menu (1-4): ";
+        cin >> pilihan;
+        cin.ignore();  // Membersihkan buffer input
+
+        switch (pilihan) {
+            case 1:
+                cafe.tampilkanMenu();
+                break;
+            case 2:
+                cafe.tambahPesanan();
+                break;
+            case 3:
+                cafe.tampilkanPesanan();
+                break;
+            case 4:
+                cout << "Terima kasih telah mengunjungi kafe kami. Sampai jumpa!" << endl;
+                return 0;
+            default:
+                cout << "Pilihan tidak valid. Silakan coba lagi." << endl;
+        }
+    }
+
+    return 0;
+}
 </code></pre>
 
-<h2>8. </h2>
+<h2>8. Kalkulator</h2>
 <pre><code class="code-block">
+#include <iostream>
+using namespace std;
 
+// Fungsi untuk penjumlahan
+double tambah(double x, double y) {
+    return x + y;
+}
+
+// Fungsi untuk pengurangan
+double kurang(double x, double y) {
+    return x - y;
+}
+
+// Fungsi untuk perkalian
+double kali(double x, double y) {
+    return x * y;
+}
+
+// Fungsi untuk pembagian
+double bagi(double x, double y) {
+    if (y != 0) {
+        return x / y;
+    } else {
+        cout << "Tidak bisa membagi dengan nol" << endl;
+        return 0;  // Mengembalikan nilai 0 jika pembagian dengan nol
+    }
+}
+
+int main() {
+    int pilihan;
+    double num1, num2;
+
+    // Menampilkan menu operasi
+    cout << "Pilih operasi:" << endl;
+    cout << "1. Tambah" << endl;
+    cout << "2. Kurang" << endl;
+    cout << "3. Kali" << endl;
+    cout << "4. Bagi" << endl;
+
+    // Meminta input pilihan operasi
+    cout << "Masukkan pilihan (1/2/3/4): ";
+    cin >> pilihan;
+
+    // Meminta input angka
+    cout << "Masukkan angka pertama: ";
+    cin >> num1;
+    cout << "Masukkan angka kedua: ";
+    cin >> num2;
+
+    // Melakukan operasi sesuai dengan pilihan pengguna
+    switch (pilihan) {
+        case 1:
+            cout << num1 << " + " << num2 << " = " << tambah(num1, num2) << endl;
+            break;
+        case 2:
+            cout << num1 << " - " << num2 << " = " << kurang(num1, num2) << endl;
+            break;
+        case 3:
+            cout << num1 << " * " << num2 << " = " << kali(num1, num2) << endl;
+            break;
+        case 4:
+            double hasilBagi = bagi(num1, num2);
+            if (num2 != 0) {  // Mengecek apakah pembagian berhasil
+                cout << num1 << " / " << num2 << " = " << hasilBagi << endl;
+            }
+            break;
+        default:
+            cout << "Pilihan tidak valid!" << endl;
+            break;
+    }
+
+    return 0;
+}
 </code></pre>
 
-<h2>9. </h2>
+<h2>9. Kasir</h2>
 <pre><code class="code-block">
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
 
+class Barang {
+public:
+    string nama;
+    double harga;
+    int jumlah;
+    double total;
+
+    // Konstruktor untuk membuat objek Barang
+    Barang(string nama, double harga, int jumlah) {
+        this->nama = nama;
+        this->harga = harga;
+        this->jumlah = jumlah;
+        this->total = harga * jumlah;
+    }
+
+    // Menampilkan rincian barang
+    void tampilkanRincian() {
+        cout << nama << " - Harga: " << harga << " - Jumlah: " << jumlah << " - Total: " << total << endl;
+    }
+};
+
+class Kasir {
+public:
+    vector<Barang> daftarBarang;
+    double totalHarga;
+
+    // Konstruktor untuk inisialisasi
+    Kasir() {
+        totalHarga = 0;
+    }
+
+    // Menambah barang ke daftar belanja
+    void tambahBarang(string nama, double harga, int jumlah) {
+        Barang barang(nama, harga, jumlah);
+        daftarBarang.push_back(barang);
+        totalHarga += barang.total;
+        cout << nama << " x" << jumlah << " ditambahkan ke daftar belanja." << endl;
+    }
+
+    // Menampilkan rincian belanja
+    void tampilkanRincian() {
+        cout << "\n--- Rincian Belanja ---" << endl;
+        for (const auto& barang : daftarBarang) {
+            barang.tampilkanRincian();
+        }
+        cout << "\nTotal Belanja: " << totalHarga << endl;
+    }
+
+    // Proses pembayaran dan menghitung kembalian
+    void bayar(double uangDibayar) {
+        if (uangDibayar >= totalHarga) {
+            double kembalian = uangDibayar - totalHarga;
+            cout << "\nTotal yang harus dibayar: " << totalHarga << endl;
+            cout << "Uang yang dibayar: " << uangDibayar << endl;
+            cout << "Kembalian: " << kembalian << endl;
+        } else {
+            cout << "\nUang yang dibayar kurang dari total belanja. Transaksi dibatalkan." << endl;
+        }
+    }
+};
+
+int main() {
+    Kasir kasir;
+    int pilihan;
+    string namaBarang;
+    double harga;
+    int jumlah;
+    double uangDibayar;
+
+    while (true) {
+        cout << "\nMenu Kasir" << endl;
+        cout << "1. Tambah barang" << endl;
+        cout << "2. Tampilkan rincian belanja" << endl;
+        cout << "3. Bayar" << endl;
+        cout << "4. Keluar" << endl;
+        cout << "Pilih menu (1/2/3/4): ";
+        cin >> pilihan;
+        cin.ignore(); // Clear buffer setelah input pilihan
+
+        if (pilihan == 1) {
+            cout << "Masukkan nama barang: ";
+            getline(cin, namaBarang);
+            cout << "Masukkan harga barang: ";
+            cin >> harga;
+            cout << "Masukkan jumlah barang: ";
+            cin >> jumlah;
+            kasir.tambahBarang(namaBarang, harga, jumlah);
+        } else if (pilihan == 2) {
+            kasir.tampilkanRincian();
+        } else if (pilihan == 3) {
+            kasir.tampilkanRincian();
+            cout << "Masukkan uang yang dibayar: ";
+            cin >> uangDibayar;
+            kasir.bayar(uangDibayar);
+        } else if (pilihan == 4) {
+            cout << "Terima kasih, sampai jumpa!" << endl;
+            break;
+        } else {
+            cout << "Pilihan tidak valid, coba lagi." << endl;
+        }
+    }
+
+    return 0;
+}
 </code></pre>
 
-<h2>10. </h2>
+<h2>10. Kereta</h2>
 <pre><code class="code-block">
+#include <iostream>
+#include <vector>
+#include <string>
 
+using namespace std;
+
+class Kereta {
+public:
+    string nama_kereta;
+    string tujuan;
+    string waktu_berangkat;
+    int kapasitas;
+    int terisi;
+
+    Kereta(string nama, string tujuan, string waktu, int kapasitas)
+        : nama_kereta(nama), tujuan(tujuan), waktu_berangkat(waktu), kapasitas(kapasitas), terisi(0) {}
+
+    void tampilkan_info() {
+        cout << "Nama Kereta: " << nama_kereta << endl;
+        cout << "Tujuan: " << tujuan << endl;
+        cout << "Waktu Berangkat: " << waktu_berangkat << endl;
+        cout << "Kapasitas: " << kapasitas << endl;
+        cout << "Terisi: " << terisi << "/" << kapasitas << endl;
+        cout << endl;
+    }
+
+    void pesan_tiket(int jumlah_tiket) {
+        if (terisi + jumlah_tiket <= kapasitas) {
+            terisi += jumlah_tiket;
+            cout << "Berhasil memesan " << jumlah_tiket << " tiket untuk " << nama_kereta << "." << endl;
+        } else {
+            cout << "Maaf, hanya tersisa " << kapasitas - terisi << " tiket untuk " << nama_kereta << "." << endl;
+        }
+    }
+};
+
+class SistemKereta {
+private:
+    vector<Kereta> kereta_list;
+
+public:
+    void tambah_kereta(const Kereta& kereta) {
+        kereta_list.push_back(kereta);
+    }
+
+    void tampilkan_jadwal() {
+        cout << "Jadwal Kereta:" << endl;
+        for (auto& kereta : kereta_list) {
+            kereta.tampilkan_info();
+        }
+    }
+
+    void pesan_tiket_kereta(const string& nama_kereta, int jumlah_tiket) {
+        bool ditemukan = false;
+        for (auto& kereta : kereta_list) {
+            if (kereta.nama_kereta == nama_kereta) {
+                kereta.pesan_tiket(jumlah_tiket);
+                ditemukan = true;
+                break;
+            }
+        }
+        if (!ditemukan) {
+            cout << "Kereta dengan nama " << nama_kereta << " tidak ditemukan." << endl;
+        }
+    }
+};
+
+int main() {
+    SistemKereta sistem_kereta;
+
+    // Menambahkan kereta ke sistem
+    Kereta kereta1("Ekspres Jakarta", "Bandung", "10:00", 100);
+    Kereta kereta2("Argo Bromo", "Surabaya", "15:00", 150);
+    Kereta kereta3("Kelas Ekonomi", "Yogyakarta", "12:00", 200);
+
+    sistem_kereta.tambah_kereta(kereta1);
+    sistem_kereta.tambah_kereta(kereta2);
+    sistem_kereta.tambah_kereta(kereta3);
+
+    int pilihan;
+    string nama_kereta;
+    int jumlah_tiket;
+
+    while (true) {
+        cout << "\nMenu:" << endl;
+        cout << "1. Tampilkan Jadwal Kereta" << endl;
+        cout << "2. Pesan Tiket Kereta" << endl;
+        cout << "3. Keluar" << endl;
+
+        cout << "Pilih menu (1/2/3): ";
+        cin >> pilihan;
+
+        if (pilihan == 1) {
+            sistem_kereta.tampilkan_jadwal();
+        } else if (pilihan == 2) {
+            cout << "Masukkan nama kereta yang ingin dipesan: ";
+            cin.ignore(); // Mengabaikan newline yang tersisa
+            getline(cin, nama_kereta);
+            cout << "Masukkan jumlah tiket yang ingin dipesan: ";
+            cin >> jumlah_tiket;
+            sistem_kereta.pesan_tiket_kereta(nama_kereta, jumlah_tiket);
+        } else if (pilihan == 3) {
+            cout << "Terima kasih telah menggunakan sistem kereta." << endl;
+            break;
+        } else {
+            cout << "Pilihan tidak valid. Silakan coba lagi." << endl;
+        }
+    }
+
+    return 0;
+}
 </code></pre>
 
 <h2>Mau Lebih Banyak Kode? Lihat Di Github Saya (Kode 11 - 20)</h2>
